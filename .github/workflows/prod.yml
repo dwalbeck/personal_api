@@ -1,0 +1,52 @@
+name: Personal professional website API
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: node:20
+    steps:
+      - uses: actions/checkout@v6.0.1
+
+      - name: Make envfile
+        uses: SpicyPizza/create-envfile@v2.0
+        with:
+          envkey_DATABASE_URL: ${{ DATABASE_URL }}
+          envkey_OPENAI_API_KEY: ${{ OPENAI_API_KEY }}
+          envkey_OPENAI_ORG_ID: ${{ OPENAI_ORG_ID }}
+          envkey_OPENAI_PROJECT_ID: ${{ OPENAI_PROJECT_ID }}
+          envkey_LOG_LEVEL: "INFO"
+          envkey_SMTP_HOST=: "smtp.gmail.com"
+          envkey_SMTP_PORT: "587"
+          envkey_SMTP_USER: ${{ SMTP_USER }}
+          envkey_SMTP_PASSWORD: ${{ SMTP_PASSWORD }}
+          envkey_EMAIL_TO: "daveywalbeck@gmail.com"
+          file_name: .env
+
+      - name: install python packages
+        run: pip install -r requirements.txt
+
+      - name: copy files to web server
+        uses: appleboy/scp-action@v1
+        with:
+          host: 54.237.75.43
+          username: deploy
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          source: ./*
+          target: /var/www/personal_api/
+
+      - name: start the python api
+        uses: Core2Goal/ssh-action@v1
+        with:
+          host: 54.237.75.43
+          port: 22
+          username: deploy
+          private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/personal_api
+            npm run dev
