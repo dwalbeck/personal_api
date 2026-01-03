@@ -21,5 +21,10 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
   );
 
   GRANT ALL PRIVILEGES ON DATABASE "personal_ai" TO apiuser;
+  GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE "portfolio_embeddings" TO apiuser;
+  GRANT SELECT, UPDATE ON SEQUENCE "portfolio_embeddings_id_seq" TO apiuser;
+
+  CREATE ROLE davey WITH LOGIN SUPERUSER CREATEDB CREATEROLE PASSWORD 'kier*33';
+  GRANT dba TO davey;
 
 EOSQL

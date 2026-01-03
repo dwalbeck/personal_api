@@ -1,16 +1,18 @@
+import dotenv
+import os
+
+# CRITICAL: Load environment variables FIRST, before any other imports
+# that might need them (like routes.route which initializes OpenAI client)
+dotenv.load_dotenv()
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from database.database import init_postgres, close_postgres
 from routes.route import router
-import dotenv
 import uvicorn
 import logging
-import os
 from pathlib import Path
-
-# Load environment variables before setting up logging
-dotenv.load_dotenv()
 
 
 # Configure logging

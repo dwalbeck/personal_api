@@ -219,11 +219,11 @@ async def contact(contact_data: ContactRequest):
         msg = MIMEMultipart()
         msg['From'] = contact_data.email
         msg['To'] = os.getenv("EMAIL_TO")
-        msg['Subject'] = f"Portfolio Contact Form - {contact_data.firstName} {contact_data.lastName}"
+        msg['Subject'] = f"Personal Site Contact Form - {contact_data.firstName} {contact_data.lastName}"
 
         # Create email body
         body = f"""
-New contact form submission from portfolio website:
+New contact form submission from personal website:
 
 Name: {contact_data.firstName} {contact_data.lastName}
 Email: {contact_data.email}
@@ -241,14 +241,24 @@ Message:
         smtp_user = os.getenv("SMTP_USER", "")
         smtp_password = os.getenv("SMTP_PASSWORD", "")
 
+        # Strip whitespace from password (App Passwords often have spaces when copied)
+        if smtp_password:
+            smtp_password = smtp_password.replace(" ", "").replace("\n", "").replace("\r", "").strip()
+
         logger.debug(f"Sending email via SMTP server: {smtp_host}:{smtp_port}")
-        logger.debug(f"SMTP credentials: {smtp_user} : {smtp_password}")
+        logger.debug(f"SMTP user: {smtp_user}")
+        logger.debug(f"SMTP password length: {len(smtp_password)} characters")
+        logger.debug(f"SMTP password (masked): {'*' * min(len(smtp_password), 16)}")
 
         # Send email
         with smtplib.SMTP(smtp_host, smtp_port) as server:
+            server.set_debuglevel(1)  # Enable SMTP debug output
             if smtp_user and smtp_password:
+                logger.debug("Starting TLS...")
                 server.starttls()
+                logger.debug(f"Attempting login with user: {smtp_user}")
                 server.login(smtp_user, smtp_password)
+                logger.debug("Login successful")
 
             server.send_message(msg)
 

@@ -12,9 +12,8 @@ RUN pip install uv
 RUN pip install -r requirements.txt
 #RUN uv pip install -r pyproject.toml --system
 
-#WORKDIR /app/src
-
 EXPOSE 8000
 
-CMD ["npm", "run", "dev"]
-#CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+# Production command using Gunicorn with Uvicorn workers
+# Configuration is in gunicorn.conf.py
+CMD ["gunicorn", "main:app", "-c", "gunicorn.conf.py"]
