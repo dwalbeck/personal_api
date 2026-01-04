@@ -1,5 +1,7 @@
 name: Personal professional website API
 
+concurrency: production
+
 on:
   push:
     branches:
@@ -8,6 +10,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: production
     container: node:20
     steps:
       - uses: actions/checkout@v6.0.1
