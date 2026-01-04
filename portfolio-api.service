@@ -8,9 +8,9 @@ Type=notify
 User=www-data
 Group=www-data
 WorkingDirectory=/var/www/personal_api
-Environment="PATH=/var/www/personal_api/.venv/bin"
+Environment="PATH=/var/www/personal_api/venv/bin"
 EnvironmentFile=/var/www/personal_api/.env
-ExecStart=/var/www/personal_api/.venv/bin/gunicorn main:app \
+ExecStart=/var/www/personal_api/venv/bin/gunicorn main:app \
     --workers 4 \
     --worker-class uvicorn.workers.UvicornWorker \
     --bind 0.0.0.0:8000 \
