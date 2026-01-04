@@ -52,8 +52,9 @@ jobs:
         with:
           command: |
             cd /var/www/personal_api
+            source venv/bin/activate
             pip install -r requirements.txt
-            gunicorn main:app -c gunicorn.conf.py
+            sudo /usr/bin/systemctl restart personal_api.service
           host: 54.237.75.43
           port: 22
           user: deploy
